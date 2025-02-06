@@ -30,7 +30,7 @@
             transition: 0.3s;
         }
         button:hover {
-            background: #000;
+            background: #000; //small color changes -canada
         }
     </style>
 </head>
@@ -52,4 +52,3 @@
     </script>
 </body>
 </html>
-//small color changes -canada
