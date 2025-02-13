@@ -515,4 +515,97 @@
       });
       chordSongSelect.addEventListener('change', updateChordSongInstructions);
 
-      function updat
+      function updateChordSongInstructions() {
+        const selectedSong = chordSongSelect.value;
+        chordSongInstructions.textContent = GG_ALL_GAME_CONFIG.songs[selectedSong] || '';
+      }
+
+      function updateSongGuide() {
+        // Clear existing options
+        while (songSelect.options.length > 1) {
+          songSelect.remove(1);
+        }
+        // Add all non-chord songs
+        Object.keys(GG_ALL_GAME_CONFIG.songs).forEach(songKey => {
+          if (!songKey.includes('chord') && songKey !== 'snoopdawg') {
+            const option = document.createElement('option');
+            option.value = songKey;
+            option.textContent = songKey.charAt(0).toUpperCase() + songKey.slice(1);
+            songSelect.appendChild(option);
+          }
+        });
+        // Add chord songs if enabled
+        if (GG_ALL_GAME_CONFIG.chordSongsEnabled) {
+          Object.keys(GG_ALL_GAME_CONFIG.songs).forEach(songKey => {
+            if (songKey.includes('chord') || songKey === 'snoopdawg') {
+              const option = document.createElement('option');
+              option.value = songKey;
+              option.textContent = songKey.charAt(0).toUpperCase() + songKey.slice(1);
+              songSelect.appendChild(option);
+            }
+          });
+        }
+        // Add new songs
+        const newSongs = ['hotcrossbuns', 'maryhadalittlelamb'];
+        newSongs.forEach(songKey => {
+          const option = document.createElement('option');
+          option.value = songKey;
+          option.textContent = songKey.charAt(0).toUpperCase() + songKey.slice(1).replace(/([A-Z])/g, ' $1').trim();
+          songSelect.appendChild(option);
+        });
+      }
+      // Update song guide when chord songs are toggled
+      chordSongsToggle.addEventListener('change', function() {
+        GG_ALL_GAME_CONFIG.chordSongsEnabled = this.checked;
+        updateSongGuide();
+        updateSongInstructions();
+      });
+      // Initial update of song guide
+      updateSongGuide();
+      // Show introduction popup
+      document.getElementById('introduction-popup').style.display = 'block';
+      // Close popup when button is clicked
+      document.getElementById('close-popup').addEventListener('click', function() {
+        document.getElementById('introduction-popup').style.display = 'none';
+      });
+      let chordMode = false;
+      let currentChord = '';
+      Promise.all([
+        loadSound(GG_ALL_GAME_CONFIG.c1SoundUrl),
+        loadSound(GG_ALL_GAME_CONFIG.d2SoundUrl),
+        loadSound(GG_ALL_GAME_CONFIG.e3SoundUrl),
+        loadSound(GG_ALL_GAME_CONFIG.f4SoundUrl),
+        loadSound(GG_ALL_GAME_CONFIG.g5SoundUrl),
+        loadSound(GG_ALL_GAME_CONFIG.a6SoundUrl),
+        loadSound(GG_ALL_GAME_CONFIG.b7SoundUrl),
+        loadSound(GG_ALL_GAME_CONFIG.c8SoundUrl),
+        loadSound(GG_ALL_GAME_CONFIG.d9SoundUrl),
+        loadSound(GG_ALL_GAME_CONFIG.e10SoundUrl)
+      ]).then(([c1Sound, d2Sound, e3Sound, f4Sound, g5Sound, a6Sound, b7Sound, c8Sound, d9Sound, e10Sound]) => {
+        c1Buffer = c1Sound;
+        d2Buffer = d2Sound;
+        e3Buffer = e3Sound;
+        f4Buffer = f4Sound;
+        g5Buffer = g5Sound;
+        a6Buffer = a6Sound;
+        b7Buffer = b7Sound;
+        c8Buffer = c8Sound;
+        d9Buffer = d9Sound;
+        e10Buffer = e10Sound;
+        createKeys();
+        setInstructions();
+        document.addEventListener('keydown', handleKeyDown);
+        document.addEventListener('keyup', handleKeyUp);
+      }).catch(error => {
+        console.error('Error loading sounds:', error);
+        createKeys();
+        setInstructions();
+        document.addEventListener('keydown', handleKeyDown);
+        document.addEventListener('keyup', handleKeyUp);
+      });
+    })();
+  </script>
+
+</body>
+
+</html>
