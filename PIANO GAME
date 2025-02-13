@@ -1,0 +1,518 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta name="referrer" content="no-referrer-when-downgrade">
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Mr.Canada's Piano 🎹</title>
+  <style>
+    #discord-link {
+      position: fixed;
+      bottom: 20px;
+      right: 20px;
+      width: 50px;
+      height: 50px;
+      cursor: pointer;
+      z-index: 1000;
+    }
+
+    #discord-link img {
+      width: 100%;
+      height: 100%;
+      object-fit: contain;
+    }
+
+    #discord-popup {
+      display: none;
+      position: fixed;
+      bottom: 80px;
+      right: 20px;
+      background-color: #ffffff;
+      color: #1a1a2e;
+      padding: 10px;
+      border-radius: 5px;
+      font-size: 14px;
+      z-index: 1001;
+      box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+    }
+
+    :root {
+      --background-color: #1a1a2e;
+    }
+
+    @font-face {
+      font-family: "Press Start 2P";
+      src: url("https://storage.wildwest.gg/uploads/1730265476288_press_start_2p.woff2") format("woff2");
+      font-weight: normal;
+      font-style: normal;
+    }
+
+    body {
+      margin: 0;
+      padding: 20px;
+      font-family: "Press Start 2P", cursive;
+      background-color: var(--background-color);
+      color: #e94560;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: flex-start;
+      min-height: 100vh;
+    }
+
+    h1 {
+      text-align: center;
+      margin-bottom: 20px;
+    }
+
+    #introduction-popup {
+      display: none;
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background-color: rgba(0, 0, 0, 0.7);
+      z-index: 1000;
+    }
+
+    #introduction-content {
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      background-color: #ffffff;
+      color: #1a1a2e;
+      padding: 30px;
+      border-radius: 10px;
+      max-width: 800px;
+      width: 90%;
+      text-align: center;
+      font-size: 14px;
+      line-height: 1.6;
+    }
+
+    #close-popup {
+      display: block;
+      margin-top: 20px;
+      padding: 10px 20px;
+      background-color: #e94560;
+      color: #ffffff;
+      border: none;
+      border-radius: 5px;
+      cursor: pointer;
+      font-family: "Press Start 2P", cursive;
+    }
+
+    #keyboard {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: center;
+      max-width: 600px;
+      margin-bottom: 20px;
+    }
+
+    .key {
+      width: 80px;
+      height: 120px;
+      margin: 5px;
+      border: 2px solid #e94560;
+      border-radius: 0 0 5px 5px;
+      background-color: #ffffff;
+      color: #1a1a2e;
+      font-size: 18px;
+      cursor: pointer;
+      transition: all 0.1s ease;
+    }
+
+    .key:hover,
+    .key:active {
+      background-color: #f0f0f0;
+      transform: translateY(5px);
+    }
+
+    .key span {
+      display: block;
+      font-size: 12px;
+      margin-top: 10px;
+      color: #e94560;
+    }
+
+    #instructions {
+      margin-top: 30px;
+      text-align: center;
+      font-size: 14px;
+    }
+
+    #guidebook {
+      background-color: #ffffff;
+      color: #1a1a2e;
+      padding: 20px;
+      border-radius: 10px;
+      max-width: 600px;
+      margin-top: 20px;
+    }
+
+    #songSelect {
+      margin-bottom: 10px;
+      padding: 5px;
+      font-family: "Press Start 2P", cursive;
+    }
+
+    #songInstructions {
+      white-space: pre-wrap;
+      font-size: 12px;
+      line-height: 1.5;
+    }
+
+    #settings {
+      background-color: #ffffff;
+      color: #1a1a2e;
+      padding: 20px;
+      border-radius: 10px;
+      max-width: 600px;
+      margin-top: 20px;
+    }
+
+    #settings label {
+      display: block;
+      margin-bottom: 10px;
+    }
+
+    #settings input[type="range"],
+    #settings input[type="color"] {
+      width: 100%;
+      margin-top: 5px;
+    }
+
+    #volume-warning {
+      color: #e94560;
+      font-size: 12px;
+      margin-top: 5px;
+      display: none;
+    }
+
+    @media (max-width: 768px) {
+      .key {
+        width: 60px;
+        height: 90px;
+        font-size: 14px;
+      }
+    }
+  </style>
+</head>
+
+<body>
+  <h1>Mr.Canada's Piano 🎹</h1>
+
+  <div id="introduction-popup">
+    <div id="introduction-content">
+      <p>Welcome to Canada's Piano 🎹, the ultimate piano experience celebrating the Great White North! Here, you can play your favorite tunes using simple number combinations. We've included some popular melodies to get you started, but we'd love to hear your ideas too! Please comment with more song ideas using number combinations (e.g., "123 65" instead of "O Canada"). Let's make beautiful music together, eh!</p>
+      <button id="close-popup">Let's Play!</button>
+    </div>
+  </div>
+  <div id="keyboard"></div>
+  <div id="instructions"></div>
+  <div id="guidebook">
+    <h2>Song Guide</h2>
+    <select id="songSelect">
+      <option value="">Select a song</option>
+      <option value="mcdonalds">McDonald's Theme</option>
+      <option value="fnaf">FNAF 6:00AM</option>
+      <option value="madworld">Mad World</option>
+      <option value="astronomia">Astronomia (Coffin Dance)</option>
+      <option value="birthday">Happy Birthday</option>
+      <option value="babyshark">Baby Shark</option>
+      <option value="deathbed">Death Bed (Coffee for Your Head)</option>
+      <option value="rickroll">Never Gonna Give You Up</option>
+      <option value="oldspice">Old Spice</option>
+      <option value="bellaciao">Bella Ciao</option>
+      <option value="tetris">Tetris Theme</option>
+      <option value="bluebirb">Blue Birb</option>
+      <option value="soundofsilence">The Sound of Silence</option>
+      <option value="avatar">Avatar</option>
+      <option value="strangerthings">Stranger Things</option>
+      <option value="weddingsong">Wedding Song</option>
+      <option value="halo">Halo Theme</option>
+      <option value="sayonara">Sayonara</option>
+      <option value="sadtheme">Sad Theme Up</option>
+      <option value="starwars">Force Theme, Star Wars</option>
+      <option value="oldtownroad">Old Town Road</option>
+      <option value="gravityfalls">Gravity Falls Theme</option>
+      <option value="fortnite">Fortnite Default Dance</option>
+      <option value="odetojoy">Ode To Joy</option>
+      <option value="twinkle">Twinkle Twinkle Little Star</option>
+      <option value="minecraft">Minecraft Danny (Hal4)</option>
+      <option value="demonslayer">Demon Slayer OP</option>
+      <option value="ussranthem">The FULL USSR Anthem</option>
+    </select>
+    <div id="songInstructions"></div>
+  </div>
+  <div id="settings">
+    <h2>Settings</h2>
+    <label for="volumeControl">Volume:
+      <input type="range" id="volumeControl" min="0" max="4" step="0.1" value="1">
+    </label>
+    <div id="volume-warning">Warning: High volume levels may cause audio distortion!</div>
+    <label for="backgroundColorPicker">Background Color:
+      <input type="color" id="backgroundColorPicker" value="#1a1a2e">
+    </label>
+    <label for="chordSongsToggle">
+      <input type="checkbox" id="chordSongsToggle"> Enable Chord Songs
+    </label>
+  </div>
+  <div id="chordSongGuide" style="display: none;">
+    <h2>Chord Song Guide</h2>
+    <p>{123} means play these notes at the same time.</p>
+    <select id="chordSongSelect">
+      <option value="">Select a chord song</option>
+      <option value="simplechords">Simple Chord Song</option>
+    </select>
+    <div id="chordSongInstructions"></div>
+  </div>
+  <script>
+    (function() {
+      const GG_ALL_GAME_CONFIG = {
+        keys: ['C', 'D', 'E', 'F', 'G', 'A', 'B', 'C', 'D', 'E'], // Piano keys
+        pcKeys: ['1', '2', '3', '4', '5', '6', '7', '8', '9', '0'], // PC keyboard keys
+        keyColor: '#ffffff', // Key color
+        keyBorderColor: '#e94560', // Key border color
+        keyTextColor: '#1a1a2e', // Key text color
+        keySpanColor: '#e94560', // Key span (number) color
+        c1SoundUrl: 'https://storage.wildwest.gg/uploads/2024-11-21T01:33:51.206Z_c5.mp3', // URL for C1 sound
+        d2SoundUrl: 'https://storage.wildwest.gg/uploads/2024-11-21T01:35:00.125Z_d5.mp3', // URL for D2 sound
+        e3SoundUrl: 'https://storage.wildwest.gg/uploads/2024-11-21T01:36:36.448Z_e5.mp3', // URL for E3 sound
+        f4SoundUrl: 'https://storage.wildwest.gg/uploads/2024-11-21T01:38:02.005Z_f5.mp3', // URL for F4 sound
+        g5SoundUrl: 'https://storage.wildwest.gg/uploads/2024-11-21T01:39:46.449Z_g5.mp3', // URL for G5 sound
+        a6SoundUrl: 'https://storage.wildwest.gg/uploads/2024-11-21T01:40:59.568Z_a5.mp3', // URL for A6 sound
+        b7SoundUrl: 'https://storage.wildwest.gg/uploads/2024-11-21T01:42:23.207Z_b5.mp3', // URL for B7 sound
+        c8SoundUrl: 'https://storage.wildwest.gg/uploads/2024-11-21T01:50:36.553Z_piano-mp3_c6.mp3', // URL for C8 sound
+        d9SoundUrl: 'https://storage.wildwest.gg/uploads/2024-11-22T00:09:20.215Z_d6.mp3', // URL for D9 sound
+        e10SoundUrl: 'https://storage.wildwest.gg/uploads/2024-11-22T00:09:50.273Z_e6.mp3', // URL for E10 sound
+        chords: {
+          '135': [0, 2, 4], // Indices for C, E, G
+          '246': [1, 3, 5], // Indices for D, F, A
+          '457': [3, 4, 6], // Indices for F, G, B
+          '468': [3, 5, 7] // Indices for F, A, C
+        },
+        songs: {
+          mcdonalds: "McDonald's Theme:\n123 65",
+          fnaf: "FNAF 6:00AM:\n4 - 6 - 5 - 1 - 1 - 5 - 6 - 4",
+          madworld: "Mad World:\n2 2 4 4  2 2 6 6 6  4  5 5 5 3  5 5 5 4 3 2",
+          astronomia: "Astronomia (Coffin Dance):\n2 2 6 5 4 3  3 4 5  4 3 2  2 4 3 4 3 4   2  2 4 3 4 3 4",
+          birthday: "Happy Birthday:\n1 1 2 1 4 3, 1 1 2 1 5 4, 1 1 8 6 4 3 2, 5 5 2 3 2 1",
+          babyshark: "Baby Shark:\n56888 88 88 56888 88 88 56888 88 88 887",
+          deathbed: "Death Bed (Coffee for Your Head):\n3 5 3, 3 6 3, 3 5 5 2, 1 5 2 2 1 2 1, 1 2 3, 1 5 2 2 1 2, 5 5 3... 2 1",
+          rickroll: "Never Gonna Give You Up:\n1242665 1242554 124245321154 1242665 124283432 124245321154",
+          oldspice: "Old Spice:\n55 6   8   7   90  8",
+          bellaciao: "Bella Ciao:\n3 6 7 8 6  3 6 7 8 6  3 6 7 8 7 6 8 7 6 0 0 0",
+          tetris: "Tetris Theme:\n0, 7, 8, 9, 8, 7, 6, 8, 0, 9, 8, 7, 7, 8, 9, 0, 8, 6, 6, 2, 4, 6, 5, 4, 3, 8, 0, 9, 8, 7, 7, 8, 9, 0, 8, 6, 6",
+          bluebirb: "Blue Birb:\n3-6-7-8 ,   7-6,    3-6-7-8,    9-8-9-0,     3-6-7-8,   7-6,    6-0-9  6-0-9,  5-5-6-6",
+          soundofsilence: "The Sound of Silence:\n22 44 66 5 111 33 55 4 44 66 88 9 98 44 66 88 9 98",
+          avatar: "Avatar:\n9-9-87 , 9-9-8-7 , 6-77-7-65 ,  7-7-7-65\n99-9-87 , 9-9-8-7 ,  7-7-8-7-65 , 7-7-6-5",
+          strangerthings: "Stranger Things:\n1--3--5--7--8--7--5--3--1--3--5--7--8--7--5--3--\n1-3-5-7-8-7-5-3-2-3-5-7-8-7-5-3-1-3-5-7-8-7-5-3-2",
+          weddingsong: "Wedding Song:\n5     8-8-8    5-9-7-8    5-8-9-0-9-8-7-6-7-8     5     8-8-8    5-9-7-8    5-8-9-0-9-8-7-6-7-8",
+          halo: "Halo Theme (set playback speed to 0.25):\n2 3 4 3 5 4 3, 2-\n6 7 8- 7 5 7 6-",
+          sayonara: "Sayonara:\n6 8 0 8 4 6 8 6 2 4 6 4 3 5 7 5",
+          sadtheme: "Sad Up theme:\n4-6-4-3,      4-6-3-2,   2-4-2-1,      2-6-5,   2-6-5,   4-2, 4-5-4-3, 3-5-3-1",
+          starwars: "Force Theme, Star Wars:\n36 7 8-9-8 3 3-6 7 8 3 8 6 0 9",
+          oldtownroad: "Old Town Road:\n2226 5 4 22654 221 5 564 2 2",
+          gravityfalls: "Gravity Falls Theme:\n2346561 2343 5654 4446654 6665654 4446654 666 888 4446654",
+          fortnite: "Fortnite Default Dance:\n3 3 5 6 5    3 5 6 5 3 2 3 6 5 3 2 3",
+          odetojoy: "\"Ode To Joy\" by Beethoven:\n3-3-4-5-5-4-3-2-1-1-2-3-3----22----\n3-3-4-5-5-4-3-2-1-1-2-3-2----11----\n2-2-3-1-2-343-1-2-343-2-1-2-2----\n3-3-4-5-5-4-3-2-1-1-2-3-2----11----",
+          twinkle: "Twinkle Twinkle Little Star:\n1 1 5 5 6 6 5    4 4 3 3 2 2 1",
+          minecraft: "Minecraft Danny (Hal4):\n5/6/7/8   5/6/7/9/8/7/8/9/5   5/6/7/5/3/2/5/3/2/321/2/3//5   7//89/532/567/87/97/677",
+          demonslayer: "Demon Slayer OP:\n878 878 3 876 55 356 689 890",
+          ussranthem: "The FULL USSR Anthem:\n8      5 8    5 6 7   3 3 6   5 4 5   1 1   2    2 3 4    4 5 6    7 8 9    5 5 0    9 8 9    5 5 8    7 6 7    3 3 6    5 4 5    1 1 8    7 6 5 0   9   8 7 8 9   5 5   8   7 6 5 6 7    3 3    8   6 7 8    6 7 8   6 8 4    4   0 9 8 9 0   8 8   9   8 7 6 7 8   6 6    8   7   6 5   1   1 5     6   7",
+          simplechords: "Simple Chords:\n{135} {246} {457} {468}",
+          snoopdawg: "Rap Song (requested by @crab):\n{36}{36}{36}{36}{36}{36} {35} {35} {35} {35} {35}",
+          hotcrossbuns: "Hot Cross Buns:\n3 2 1, 3 2 1, 1 1 1 1, 2 2 2 2, 3 2 1",
+          maryhadalittlelamb: "Mary Had a Little Lamb:\n3 2 1 2, 3 3 3, 2 2 2, 3 5 5"
+        },
+        chordSongsEnabled: false // New property to track if chord songs are enabled
+      };
+      const keyboard = document.getElementById('keyboard');
+      const instructions = document.getElementById('instructions');
+      const songSelect = document.getElementById('songSelect');
+      const songInstructions = document.getElementById('songInstructions');
+      const volumeControl = document.getElementById('volumeControl');
+      const backgroundColorPicker = document.getElementById('backgroundColorPicker');
+      const chordSongsToggle = document.getElementById('chordSongsToggle');
+      const chordSongGuide = document.getElementById('chordSongGuide');
+      const chordSongSelect = document.getElementById('chordSongSelect');
+      const chordSongInstructions = document.getElementById('chordSongInstructions');
+      const songGuide = document.getElementById('guidebook');
+      const audioContext = new(window.AudioContext || window.webkitAudioContext)();
+      let gainNode = audioContext.createGain();
+      gainNode.connect(audioContext.destination);
+      let c1Buffer;
+      let d2Buffer;
+      let e3Buffer;
+      let f4Buffer;
+      let g5Buffer;
+      let a6Buffer;
+      let b7Buffer;
+      let c8Buffer;
+      let d9Buffer;
+      let e10Buffer;
+
+      function loadSound(url) {
+        return fetch(url)
+          .then(response => response.arrayBuffer())
+          .then(arrayBuffer => audioContext.decodeAudioData(arrayBuffer));
+      }
+
+      function createKeys() {
+        GG_ALL_GAME_CONFIG.keys.forEach((key, index) => {
+          const keyElement = document.createElement('button');
+          keyElement.className = 'key';
+          keyElement.style.backgroundColor = GG_ALL_GAME_CONFIG.keyColor;
+          keyElement.style.borderColor = GG_ALL_GAME_CONFIG.keyBorderColor;
+          keyElement.style.color = GG_ALL_GAME_CONFIG.keyTextColor;
+          keyElement.innerHTML = `${key}<span style="color: ${GG_ALL_GAME_CONFIG.keySpanColor}">${GG_ALL_GAME_CONFIG.pcKeys[index]}</span>`;
+          keyElement.addEventListener('click', () => playNote(key, index));
+          keyboard.appendChild(keyElement);
+        });
+      }
+
+      function playNote(note, index) {
+        let buffer;
+        if (note === 'C' && index === 0) {
+          buffer = c1Buffer;
+        } else if (note === 'D' && index === 1) {
+          buffer = d2Buffer;
+        } else if (note === 'E' && index === 2) {
+          buffer = e3Buffer;
+        } else if (note === 'F') {
+          buffer = f4Buffer;
+        } else if (note === 'G') {
+          buffer = g5Buffer;
+        } else if (note === 'A') {
+          buffer = a6Buffer;
+        } else if (note === 'B') {
+          buffer = b7Buffer;
+        } else if (note === 'C' && index === 7) {
+          buffer = c8Buffer;
+        } else if (note === 'D' && index === 8) {
+          buffer = d9Buffer;
+        } else if (note === 'E' && index === 9) {
+          buffer = e10Buffer;
+        }
+        if (buffer) {
+          const source = audioContext.createBufferSource();
+          source.buffer = buffer;
+          source.connect(gainNode);
+          source.start();
+        } else {
+          console.log(`Playing note: ${note}`);
+        }
+        // Visual feedback
+        const keyElement = Array.from(keyboard.children)[index];
+        if (keyElement) {
+          keyElement.style.transform = 'translateY(5px)';
+          setTimeout(() => {
+            keyElement.style.transform = 'translateY(0)';
+          }, 100);
+        }
+      }
+
+      function playChord(chordIndices) {
+        chordIndices.forEach(index => {
+          playNote(GG_ALL_GAME_CONFIG.keys[index], index);
+        });
+      }
+      let pressedKeys = new Set();
+
+      function handleKeyDown(event) {
+        if (pressedKeys.has(event.key)) return; // Ignore if key is already pressed
+        pressedKeys.add(event.key);
+        const index = GG_ALL_GAME_CONFIG.pcKeys.indexOf(event.key);
+        if (index !== -1) {
+          playNote(GG_ALL_GAME_CONFIG.keys[index], index);
+        } else if (GG_ALL_GAME_CONFIG.chordSongsEnabled) {
+          if (event.key === '{') {
+            // Start chord mode
+            chordMode = true;
+            currentChord = '';
+          } else if (event.key === '}' && chordMode) {
+            // End chord mode and play the chord
+            chordMode = false;
+            const chordIndices = GG_ALL_GAME_CONFIG.chords[currentChord];
+            if (chordIndices) {
+              playChord(chordIndices);
+            }
+            currentChord = '';
+          } else if (chordMode) {
+            // Build the chord
+            currentChord += event.key;
+          }
+        }
+      }
+
+      function handleKeyUp(event) {
+        pressedKeys.delete(event.key);
+      }
+
+      function setInstructions() {
+        const isMobile = /iPhone|iPad|iPod|Android/i.test(navigator.userAgent);
+        if (isMobile) {
+          instructions.textContent = "Tap the buttons to play notes!";
+        } else {
+          instructions.textContent = "Press 1-9 and 0 keys to play notes!";
+        }
+      }
+
+      function updateSongInstructions() {
+        const selectedSong = songSelect.value;
+        let instructions = GG_ALL_GAME_CONFIG.songs[selectedSong] || '';
+        if (GG_ALL_GAME_CONFIG.chordSongsEnabled && selectedSong.includes('chord')) {
+          instructions += "\n\nChord Mode: Use {} to play chords. Example: {135} plays C, E, G together.";
+        }
+        songInstructions.textContent = instructions;
+      }
+
+      function updateVolume() {
+        const volume = parseFloat(volumeControl.value);
+        gainNode.gain.setValueAtTime(volume, audioContext.currentTime);
+        volumeControl.title = `${Math.round(volume * 100)}%`;
+        const volumeWarning = document.getElementById('volume-warning');
+        if (volume > 2) {
+          volumeWarning.style.display = 'block';
+        } else {
+          volumeWarning.style.display = 'none';
+        }
+      }
+
+      function updateBackgroundColor() {
+        document.documentElement.style.setProperty('--background-color', backgroundColorPicker.value);
+      }
+      songSelect.addEventListener('change', updateSongInstructions);
+      volumeControl.addEventListener('input', updateVolume);
+      updateVolume(); // Initialize volume display
+      backgroundColorPicker.addEventListener('input', updateBackgroundColor);
+      chordSongsToggle.addEventListener('change', function() {
+        GG_ALL_GAME_CONFIG.chordSongsEnabled = this.checked;
+        if (this.checked) {
+          // Add chord songs to the main song guide
+          Object.keys(GG_ALL_GAME_CONFIG.songs).forEach(songKey => {
+            if (songKey.includes('chord')) {
+              const option = document.createElement('option');
+              option.value = songKey;
+              option.textContent = songKey.charAt(0).toUpperCase() + songKey.slice(1);
+              songSelect.appendChild(option);
+            }
+          });
+        } else {
+          // Remove chord songs from the main song guide
+          Array.from(songSelect.options).forEach(option => {
+            if (option.value.includes('chord')) {
+              songSelect.removeChild(option);
+            }
+          });
+        }
+        updateSongInstructions();
+      });
+      chordSongSelect.addEventListener('change', updateChordSongInstructions);
+
+      function updat
